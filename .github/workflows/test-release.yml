@@ -42,17 +42,6 @@ jobs:
         env:
           RELEASE_TAG_NAME_INPUT: ${{ github.event.inputs.release_tag_name_input }}
 
-      - name: Create Draft Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.RELEASE_TAG_NAME }}
-          release_name: ${{ env.RELEASE_NAME }}
-          draft: true
-          prerelease: false
-
 
   linux:
     runs-on: ubuntu-latest
@@ -61,41 +50,22 @@ jobs:
       PKG_VERSION: ${{ needs.setup.outputs.package_version }}
       TAG_VERSION: ${{ needs.setup.ouputs.tag_version }}
     steps:
-      - name: Create test snap
-        run: touch bitwarden_${{ env.PKG_VERSION }}_amd64.snap
+      - name: Create test assets
+        run: |
+          touch bitwarden_${{ env.PKG_VERSION }}_amd64.snap
+          touch bitwarden.${{ env.PKG_VERSION }}.nupkg
+          touch Bitwarden-${{ env.PKG_VERSION }}.pkg
 
-      - name: Create test nupkg
-        run: touch bitwarden.${{ env.PKG_VERSION }}.nupkg
-
-      - name: Create test pkg
-        run: touch Bitwarden-${{ env.PKG_VERSION }}.pkg
-
-      - name: Upload test snap
-        uses: actions/upload-release-asset@v1
+      - name: Upload test files
+        uses: softpros/action-gh-release@v1
+        with:
+          files: |
+            bitwarden_${{ env.PKG_VERSION }}_amd64.snap
+            bitwarden.${{ env.PKG_VERSION }}.nupkg
+            Bitwarden-${{ env.PKG_VERSION }}.pkg
+          draft: true
+          prerelease: false
+          tag_name: ${{ env.TAG_VERSION }}
+          name: Version ${{ env.PKG_VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup.outputs.release_upload_url }}
-          asset_name: bitwarden_${{ env.PKG_VERSION }}_amd64.snap
-          asset_path: ./bitwarden_${{ env.PKG_VERSION }}_amd64.snap
-          asset_content_type: text
-
-      - name: Upload Apple Store release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup.outputs.release_upload_url }}
-          asset_name: bitwarden.${{ env.PKG_VERSION }}.nupkg
-          asset_path: ./bitwarden.${{ env.PKG_VERSION }}.nupkg
-          asset_content_type: text 
-
-      - name: Upload Apple Store release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup.outputs.release_upload_url }}
-          asset_name: Bitwarden-${{ env.PKG_VERSION }}.pkg
-          asset_path: ./Bitwarden-${{ env.PKG_VERSION }}.pkg
-          asset_content_type: text
