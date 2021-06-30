@@ -84,6 +84,7 @@ jobs:
         run: ls -alht dist
 
       - name: Deploy to Snap Store
+        if: false
         run: |
           snapcraft upload dist/bitwarden_${{ env.PACKAGE_VERSION }}_amd64.snap --release stable
           snapcraft logout
@@ -126,6 +127,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push to Chocolatey
+        if: false
         shell: pwsh
         run: |
           cd dist
@@ -151,6 +153,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to App Store
+        if: false
         run: npm run upload:mas
         env:
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
