@@ -59,9 +59,9 @@ jobs:
     steps:
       - name: Create test assets
         run: |
-          touch bitwarden_${{ env.PKG_VERSION }}_amd64.snap
-          touch bitwarden.${{ env.PKG_VERSION }}.nupkg
-          touch Bitwarden-${{ env.PKG_VERSION }}.pkg
+          echo "test" > bitwarden_${{ env.PKG_VERSION }}_amd64.snap
+          echo "test" > bitwarden.${{ env.PKG_VERSION }}.nupkg
+          echo "test" > Bitwarden-${{ env.PKG_VERSION }}.pkg
 
       - name: Upload test files
         uses: softprops/action-gh-release@v1
