@@ -53,7 +53,8 @@ jobs:
           RELEASE_TAG_NAME_INPUT: ${{ github.event.inputs.release_tag_name_input }}
 
       - name: Testing
-        run: echo "GITHUB_REF: $GITHUB_REF" 
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF" 
 
 
   snap:
