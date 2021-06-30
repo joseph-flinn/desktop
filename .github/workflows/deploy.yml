@@ -165,6 +165,9 @@ jobs:
       RELEASE_VERSION: ${{ needs.setup.outputs.release_version }}
       TAG_VERSION: ${{ needs.setup.outputs.tag_version }}
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
       - name: Publish release
         run: |
           hub release edit \
