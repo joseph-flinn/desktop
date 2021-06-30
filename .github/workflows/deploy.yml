@@ -6,9 +6,6 @@ on:
       release_tag_name_input:
         description: "Release Tag Name <X.X.X>"
         required: true
-  release:
-    types:
-      - published
 
 
 jobs:
