@@ -42,6 +42,11 @@ jobs:
         env:
           RELEASE_TAG_NAME_INPUT: ${{ github.event.inputs.release_tag_name_input }}
 
+      - name: Test ENVs
+        run: |
+          echo "PKG_VERSION: $RELEASE_NAME"
+          echo "TAG_VERSION: $RELEASE_TAG_NAME"
+
 
   linux:
     runs-on: ubuntu-latest
