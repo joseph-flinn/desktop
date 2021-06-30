@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      package_version: ${{ steps.create_tags.outputs.package_version }}
+      tag_version: ${{ steps.create_tags.outputs.tag_version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -27,10 +29,14 @@ jobs:
             v)
               echo "RELEASE_NAME=${RELEASE_TAG_NAME_INPUT:1}" >> $GITHUB_ENV
               echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME_INPUT" >> $GITHUB_ENV
+              echo "::set-output name=package_version::${RELEASE_TAG_NAME_INPUT:1}"
+              echo "::set-output name=tag_version::$RELEASE_TAG_NAME_INPUT"
               ;;
             [0-9])
               echo "RELEASE_NAME=$RELEASE_TAG_NAME_INPUT" >> $GITHUB_ENV
               echo "RELEASE_TAG_NAME=v$RELEASE_TAG_NAME_INPUT" >> $GITHUB_ENV
+              echo "::set-output name=package_version::$RELEASE_TAG_NAME_INPUT"
+              echo "::set-output name=tag_version::v$RELEASE_TAG_NAME_INPUT"
               ;;
             *)
               exit 1
@@ -54,19 +60,18 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     needs: setup
+    env:
+      PKG_VERSION: ${{ needs.setup.outputs.package_version }}
+      TAG_VERSION: ${{ needs.setup.ouputs.tag_version }}
     steps:
-      - name: Load package version
-        run: ./.github/scripts/load-version.ps1
-        shell: pwsh
-
       - name: Create test snap
-        run: touch bitwarden_${{ env.PACKAGE_VERSION }}_amd64.snap
+        run: touch bitwarden_${{ env.PKG_VERSION }}_amd64.snap
 
       - name: Create test nupkg
-        run: touch bitwarden.${{ env.PACKAGE_VERSION }}.nupkg
+        run: touch bitwarden.${{ env.PKG_VERSION }}.nupkg
 
       - name: Create test pkg
-        run: touch Bitwarden-${{ env.PACKAGE_VERSION }}.pkg
+        run: touch Bitwarden-${{ env.PKG_VERSION }}.pkg
 
       - name: Upload test snap
         uses: actions/upload-release-asset@v1
@@ -74,8 +79,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.setup.outputs.release_upload_url }}
-          asset_name: bitwarden_${{ env.PACKAGE_VERSION }}_amd64.snap
-          asset_path: ./bitwarden_${{ env.PACKAGE_VERSION }}_amd64.snap
+          asset_name: bitwarden_${{ env.PKG_VERSION }}_amd64.snap
+          asset_path: ./bitwarden_${{ env.PKG_VERSION }}_amd64.snap
           asset_content_type: application
 
       - name: Upload Apple Store release asset
@@ -84,8 +89,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.setup.outputs.release_upload_url }}
-          asset_name: bitwarden.${{ env.PACKAGE_VERSION }}.nupkg
-          asset_path: ./bitwarden.${{ env.PACKAGE_VERSION }}.nupkg
+          asset_name: bitwarden.${{ env.PKG_VERSION }}.nupkg
+          asset_path: ./bitwarden.${{ env.PKG_VERSION }}.nupkg
           asset_content_type: application
 
       - name: Upload Apple Store release asset
@@ -94,6 +99,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.setup.outputs.release_upload_url }}
-          asset_name: Bitwarden-${{ env.PACKAGE_VERSION }}.pkg
-          asset_path: ./Bitwarden-${{ env.PACKAGE_VERSION }}.pkg
+          asset_name: Bitwarden-${{ env.PKG_VERSION }}.pkg
+          asset_path: ./Bitwarden-${{ env.PKG_VERSION }}.pkg
           asset_content_type: application
