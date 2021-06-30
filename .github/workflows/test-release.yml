@@ -57,7 +57,7 @@ jobs:
           touch Bitwarden-${{ env.PKG_VERSION }}.pkg
 
       - name: Upload test files
-        uses: softpros/action-gh-release@v1
+        uses: softprops/action-gh-release@v1
         with:
           files: |
             bitwarden_${{ env.PKG_VERSION }}_amd64.snap
