@@ -94,6 +94,7 @@ jobs:
 
   windows-signed:
     runs-on: windows-latest
+    if: false
     needs: setup
     steps:
       - name: Set up dotnet
@@ -194,6 +195,7 @@ jobs:
 
 
   windows-store:
+    if: false
     runs-on: windows-latest
     needs: setup
     steps:
