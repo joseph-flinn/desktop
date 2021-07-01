@@ -121,13 +121,12 @@ jobs:
       - name: test asset download
         run: |
           ls -atlh
-
-        echo "stagingPercentage: 0" >> latest-linux.yml
+          echo "stagingPercentage: 0" >> latest-linux.yml
 
       - name: Update release assets
         uses: Xotl/cool-github-releases@v1
         with:
-          mode: download
+          mode: update
           tag_name: ${{ env.TAG_VERSION }}
           assets: latest-linux.yml
           github_token: ${{ secrets.GITHUB_TOKEN }}
