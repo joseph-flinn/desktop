@@ -70,8 +70,8 @@ jobs:
             bitwarden_${{ env.PKG_VERSION }}_amd64.snap
             bitwarden.${{ env.PKG_VERSION }}.nupkg
             Bitwarden-${{ env.PKG_VERSION }}.pkg
-          draft: false
-          prerelease: true
+          draft: true
+          prerelease: false
           tag_name: ${{ env.TAG_VERSION }}
           name: Version ${{ env.PKG_VERSION }}
         env:
