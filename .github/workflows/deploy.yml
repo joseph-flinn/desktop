@@ -25,6 +25,7 @@ jobs:
         id: create_tags
         run: |
           if [[ "${{ github.event_name }}" -ne "release" ]]; then
+            echo "Logic branch: not release"
             case "${RELEASE_TAG_NAME_INPUT:0:1}" in
               v)
                 echo "RELEASE_NAME=${RELEASE_TAG_NAME_INPUT:1}" >> $GITHUB_ENV
@@ -43,6 +44,7 @@ jobs:
                 ;;
             esac
           else
+            echo "Logic branch: is release"
             TAG_VERSION=$(echo ${{ github.ref }} | cut -d "/" -f 3)
             PKG_VERSION=${TAG_VERSION:1}
 
