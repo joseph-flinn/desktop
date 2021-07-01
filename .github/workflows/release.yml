@@ -264,6 +264,7 @@ jobs:
           asset_content_type: application
 
   macos:
+    if: false
     runs-on: macos-latest
     needs: setup
     steps:
