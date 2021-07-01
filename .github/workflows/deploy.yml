@@ -179,6 +179,7 @@ jobs:
         run: |
           hub release edit \
             --prerelease=false \
+            --message "" \
             $TAG_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
