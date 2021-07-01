@@ -24,7 +24,7 @@ jobs:
       - name: Create Deploy version vars
         id: create_tags
         run: |
-          if [[ "${{ github.event_name }}" -ne "release" ]]; then
+          if [[ "${{ github.event_name }}" != "release" ]]; then
             echo "Logic branch: not release"
             case "${RELEASE_TAG_NAME_INPUT:0:1}" in
               v)
