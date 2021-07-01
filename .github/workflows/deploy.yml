@@ -55,7 +55,7 @@ jobs:
       - name: Testing
         run: |
           echo "GITHUB_REF: $GITHUB_REF" 
-          echo "GITHUB_EVENT_RELEASE: $GITHUB_EVENT_RELEASE" 
+          echo "GITHUB_EVENT_RELEASE: ${{ github.event_name }}" 
 
 
   snap:
