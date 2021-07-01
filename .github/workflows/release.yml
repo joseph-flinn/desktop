@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+      package_version: ${{ steps.create_tags.outputs.package_version }}
+      tag_version: ${{ steps.create_tags.outputs.tag_version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -27,10 +29,14 @@ jobs:
             v)
               echo "RELEASE_NAME=${RELEASE_TAG_NAME_INPUT:1}" >> $GITHUB_ENV
               echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME_INPUT" >> $GITHUB_ENV
+              echo "::set-output name=package_version::${RELEASE_TAG_NAME_INPUT:1}"
+              echo "::set-output name=tag_version::$RELEASE_TAG_NAME_INPUT"
               ;;
             [0-9])
               echo "RELEASE_NAME=$RELEASE_TAG_NAME_INPUT" >> $GITHUB_ENV
               echo "RELEASE_TAG_NAME=v$RELEASE_TAG_NAME_INPUT" >> $GITHUB_ENV
+              echo "::set-output name=package_version::$RELEASE_TAG_NAME_INPUT"
+              echo "::set-output name=tag_version::v$RELEASE_TAG_NAME_INPUT"
               ;;
             *)
               exit 1
@@ -90,6 +96,41 @@ jobs:
         run: npm run publish:lin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  update-release:
+    runs-on: linux-latest
+    needs: 
+     - setup
+     - linux
+    env:
+      PKG_VERSION: ${{ needs.setup.outputs.package_version }}
+      TAG_VERSION: ${{ needs.setup.outputs.tag_version }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Get release assets
+        uses: Xotl/cool-github-releases@v1
+        with:
+          mode: download
+          tag_name: ${{ env.TAG_VERSION }}
+          assets: latest-linux.yml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: test asset download
+        run: |
+          ls -atlh
+
+        echo "stagingPercentage: 0" >> latest-linux.yml
+
+      - name: Update release assets
+        uses: Xotl/cool-github-releases@v1
+        with:
+          mode: download
+          tag_name: ${{ env.TAG_VERSION }}
+          assets: latest-linux.yml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
 
   windows-signed:
