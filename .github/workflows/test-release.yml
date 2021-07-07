@@ -110,6 +110,8 @@ jobs:
               | jq -r ' .[] | select( .tag_name == "v1.27.8")' 
           )
 
+          echo -n "Release data:\n$RELEASE_DATA"
+
           RELEASE_UPLOAD_URL=$(echo $RELEASE | jq -r ' .upload_url ' | cut -d { -f 1)
           RELEASE_ASSETS=$(echo $RELEASE | jq -r ' .assets[] | select( .name | test("latest.*[yml|json]")) | {name: .name,  url: .url}')
 
@@ -136,6 +138,7 @@ jobs:
               echo "Asset name: $FILE_NAME"
               echo "Asset url: $FILE_URL"
               echo "Asset id: $FILE_ID"
+
               echo "Grabbing asset..."
               curl \
                   -H "authorization: Bearer $GITHUB_TOKEN" \
