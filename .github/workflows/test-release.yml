@@ -104,8 +104,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RELEASE_DATA=$(curl \
-              -H "Authorization:token $GITHUB_TOKEN" \
-              -H "Accept:application/vnd.github.v3+json" \
+              -H "authorization: Bearer $GITHUB_TOKEN" \
+              -H "accept:application/vnd.github.v3+json" \
               https://api.github.com/repos/joseph-flinn/desktop/releases \
               | jq -r ' .[] | select( .tag_name == "v1.27.8")' 
           )
@@ -150,16 +150,16 @@ jobs:
               echo "Deleting remote asset..."
               curl \
                   -v -X DELETE \
-                  -H "Authorization:token $GITHUB_TOKEN" \
-                  -H "Accept: application/vnd.github.v3+json" \
+                  -H "authorization: Bearer $GITHUB_TOKEN" \
+                  -H "accept: application/vnd.github.v3+json" \
                   $FILE_URL
 
               echo "Pushing updated asset..."
               curl \
                   -v -X POST \
-                  -H "Authorization:token $GITHUB_TOKEN" \
-                  -H "Content-Type: text/yaml" \
-                  -H "Content-Length: $NEW_FILE_SIZE" \
+                  -H "authorization: Bearer $GITHUB_TOKEN" \
+                  -H "content-type: text/yaml" \
+                  -H "content-length: $NEW_FILE_SIZE" \
                   --data-binary @$FILE_NAME \
                   "$RELEASE_UPLOAD_URL?name=prerelease-$FILE_NAME" --http1.1
           done 
