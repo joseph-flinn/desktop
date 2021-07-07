@@ -111,8 +111,63 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Update test assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "stub"
+          RELEASE=$(curl \
+              -H "Authorization:token $GITHUB_TOKEN" \
+              -H "Accept:application/vnd.github.v3+json" \
+              https://api.github.com/repos/joseph-flinn/desktop/releases \
+              | jq -r ' .[] | select( .tag_name == "v1.27.8")' 
+          )
+
+          RELEASE_UPLOAD_URL=$(echo $RELEASE | jq -r ' .upload_url ' | cut -d { -f 1)
+          RELEASE_ASSETS=$(echo $RELEASE | jq -r ' .assets[] | select( .name | test("latest.*yml")) | {name: .name,  url: .url}')
+
+          echo "=====ASSETS====="
+          echo Release Upload URL: $RELEASE_UPLOAD_URL
+          echo Release Assets:
+          echo $RELEASE_ASSETS
+          echo "================"
+
+          echo $RELEASE_ASSETS | while read asset
+          do 
+              FILE_NAME=$(echo $asset | jq -r '.name')
+              FILE_URL=$(echo $asset | jq -r '.url')
+              FILE_ID=$(echo $asset | jq -r '.id')
+              echo "Asset name: $FILE_NAME"
+              echo "Asset url: $FILE_URL"
+              echo "Asset id: $FILE_ID"
+              echo "Grabbing asset..."
+              curl \
+                  -L -u joseph-flinn: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 \
+                  -H "Accept: application/octet-stream" \
+                  $FILE_URL --output  $FILE_NAME
+
+              echo "Updating local asset..."
+              echo "stagingPercentage: 0" >> $FILE_NAME
+
+              NEW_FILE_SIZE=$(wc -c < $FILE_NAME | xargs)
+              echo "New file size: $NEW_FILE_SIZE"
+              echo "New file name: $FILE_NAME"
+              echo "================"
+
+              echo "Deleting remote asset..."
+              curl \
+                  -v -X DELETE \
+                  -H "Authorization:token $GITHUB_TOKEN" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  $FILE_URL
+
+              echo "Pushing updated asset..."
+              curl \
+                  -v -X POST \
+                  -H "Authorization:token $GITHUB_TOKEN" \
+                  -H "Content-Type: text/yaml" \
+                  -H "Content-Length: $NEW_FILE_SIZE" \
+                  --data-binary @$FILE_NAME \
+                  "$RELEASE_UPLOAD_URL?name=$FILE_NAME" --http1.1
+          done 
 
 
   windows-signed:
