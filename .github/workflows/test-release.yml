@@ -138,7 +138,7 @@ jobs:
               echo "Asset id: $FILE_ID"
               echo "Grabbing asset..."
               curl \
-                  -L -u joseph-flinn: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 \
+                  -H "authorization: Bearer $GITHUB_TOKEN" \
                   -H "Accept: application/octet-stream" \
                   $FILE_URL --output  $FILE_NAME
 
