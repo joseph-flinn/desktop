@@ -170,7 +170,7 @@ jobs:
               echo "Pushing updated asset..."
               curl \
                   -X POST \
-                  -H "authorization: Bearer $GITHUB_TOKEN" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   -H "content-type: text/yaml" \
                   -H "content-length: $NEW_FILE_SIZE" \
                   --data-binary @$FILE_NAME \
