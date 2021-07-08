@@ -74,9 +74,9 @@ jobs:
             bitwarden_${{ env.PKG_VERSION }}_amd64.snap
             bitwarden.${{ env.PKG_VERSION }}.nupkg
             Bitwarden-${{ env.PKG_VERSION }}.pkg
-            latest.yaml
-            latest-linux.yaml
-            latest-mac.yaml
+            latest.yml
+            latest-linux.yml
+            latest-mac.yml
             latest-mac.json
           draft: true
           prerelease: false
