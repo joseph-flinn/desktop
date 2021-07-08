@@ -62,9 +62,9 @@ jobs:
           echo "test" > bitwarden_${{ env.PKG_VERSION }}_amd64.snap
           echo "test" > bitwarden.${{ env.PKG_VERSION }}.nupkg
           echo "test" > Bitwarden-${{ env.PKG_VERSION }}.pkg
-          echo "test" > latest.yaml
-          echo "test" > latest-linux.yaml
-          echo "test" > latest-mac.yaml
+          echo "test" > latest.yml
+          echo "test" > latest-linux.yml
+          echo "test" > latest-mac.yml
           echo "test" > latest-mac.json
 
       - name: Upload test files
@@ -112,7 +112,7 @@ jobs:
           echo -e "Release data:\n$RELEASE_DATA"
 
           RELEASE_UPLOAD_URL=$(echo $RELEASE_DATA | jq -r ' .upload_url ' | cut -d { -f 1)
-          RELEASE_ASSETS=$(echo $RELEASE_DATA | jq -rc ' .assets[] | select( .name | test("latest.*[yaml|json]")) | {name: .name,  url: .url}')
+          RELEASE_ASSETS=$(echo $RELEASE_DATA | jq -rc ' .assets[] | select( .name | test("latest.*[yml|json]")) | {name: .name,  url: .url}')
 
           echo "=====ASSETS====="
           echo Release Upload URL: $RELEASE_UPLOAD_URL
