@@ -112,7 +112,7 @@ jobs:
 
           echo -e "Release data:\n$RELEASE_DATA"
           RELEASE_UPLOAD_URL=$(echo $RELEASE_DATA | jq -r ' .upload_url ' | cut -d { -f 1)
-          RELEASE_ASSETS=$(echo $RELEASE_DATA | jq -r ' .assets[] | select( .name | test("latest.*[yml|json]")) | {name: .name,  url: .url}')
+          RELEASE_ASSETS=$(echo $RELEASE_DATA | jq -rc ' .assets[] | select( .name | test("latest.*[yml|json]")) | {name: .name,  url: .url}')
 
           echo "::set-output name=release_upload_url::$RELEASE_UPLOAD_URL"
           echo "::set-output name=release_assets::$RELEASE_ASSETS"
