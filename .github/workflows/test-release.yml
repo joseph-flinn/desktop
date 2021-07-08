@@ -116,7 +116,7 @@ jobs:
       PKG_VERSION: ${{ needs.setup.outputs.package_version }}
       TAG_VERSION: ${{ needs.setup.outputs.tag_version }}
     permissions:
-      content: write
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
