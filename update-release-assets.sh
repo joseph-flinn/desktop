@@ -12,19 +12,6 @@ curl \
     -H "Authorization:token $TOKEN" \
     -H "Accept:application/vnd.github.v3+json" \
     https://api.github.com/repos/joseph-flinn/desktop/releases \
-    | jq -r ' .[] | select( .tag_name == "v1.27.9")' > output.json
-
-#RELEASE=$(curl \
-#    -H "Authorization:token $TOKEN" \
-#    -H "Accept:application/vnd.github.v3+json" \
-#    https://api.github.com/repos/joseph-flinn/desktop/releases \
-#    | jq -r ' .[] | select( .tag_name == "v1.27.9")' 
-#)
-
-curl \
-    -H "Authorization:token $TOKEN" \
-    -H "Accept:application/vnd.github.v3+json" \
-    https://api.github.com/repos/joseph-flinn/desktop/releases \
     | jq -r ' .[] | select( .tag_name == "v1.27.9")' > release.json
 
 echo "=====RELEASE====="
