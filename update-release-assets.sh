@@ -41,9 +41,6 @@ while read -r asset; do
         -H "Accept: application/octet-stream" \
         $FILE_URL --output  $FILE_NAME
 
-        #-v -H "Authorization:token $TOKEN" \
-        #-H "Accept: $FILE_CONTENT_TYPE" \
-
     NEW_FILE_SIZE=$(wc -c < $FILE_NAME | xargs)
     echo "New file size: $NEW_FILE_SIZE"
     echo "New file name: $FILE_NAME"

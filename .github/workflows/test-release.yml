@@ -138,27 +138,27 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Get Electron publish assets
+      - name: Rename publish asset
         run: |
-          RELEASE_DATA=$(curl \
-              -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "accept:application/vnd.github.v3+json" \
+          curl \
+              -H "Authorization:token $TOKEN" \
+              -H "Accept:application/vnd.github.v3+json" \
               https://api.github.com/repos/joseph-flinn/desktop/releases \
-              | jq -r " .[] | select( .tag_name == \"$TAG_VERSION\")" 
-          )
+              | jq -r ' .[] | select( .tag_name == "v1.27.9")' > release.json
 
-          echo -e "Release data:\n$RELEASE_DATA"
+          echo "=====RELEASE====="
+          echo Release:
+          #cat release.json
 
-          RELEASE_UPLOAD_URL=$(echo $RELEASE_DATA | jq -r ' .upload_url ' | cut -d { -f 1)
-          RELEASE_ASSETS=$(echo $RELEASE_DATA | jq -rc ' .assets[] | select( .name | test("latest.*[yml|json]")) | {name: .name,  url: .url}')
+          RELEASE_UPLOAD_URL=$(cat release.json | jq -r ' .upload_url ' | cut -d { -f 1)
+          cat release.json | jq -rc ' .assets[] | select( .name | test("latest.*[yml|json]")) | {name: .name,  url: .url, content_type: .content_type}' > release_assets.jsonl
 
           echo "=====ASSETS====="
           echo Release Upload URL: $RELEASE_UPLOAD_URL
-          echo -e "Release Assets:\n$RELEASE_ASSETS"
-          echo "================"
+          echo Release Assets:
+          cat release_assets.jsonl
 
-          echo $RELEASE_ASSETS | while read asset
-          do 
+          while read -r asset; do 
               FILE_NAME=$(echo $asset | jq -r '.name')
               FILE_URL=$(echo $asset | jq -r '.url')
               FILE_ID=$(echo $asset | jq -r '.id')
@@ -168,7 +168,7 @@ jobs:
 
               echo "Grabbing asset..."
               curl \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  -L -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   -H "Accept: application/octet-stream" \
                   $FILE_URL --output  $FILE_NAME
 
@@ -186,10 +186,10 @@ jobs:
 
               echo "Pushing updated asset..."
               curl \
-                  -v -X POST \
+                  -X POST \
                   -H "authorization: Bearer $GITHUB_TOKEN" \
                   -H "content-type: text/yaml" \
                   -H "content-length: $NEW_FILE_SIZE" \
                   --data-binary @$FILE_NAME \
                   "$RELEASE_UPLOAD_URL?name=prerelease-$FILE_NAME" --http1.1
-          done 
+          done < release_assets.jsonl
