@@ -115,6 +115,8 @@ jobs:
     env:
       PKG_VERSION: ${{ needs.setup.outputs.package_version }}
       TAG_VERSION: ${{ needs.setup.outputs.tag_version }}
+    permissions:
+      content: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -160,7 +162,7 @@ jobs:
 
               echo "Deleting remote asset..."
               curl \
-                  -v -X DELETE \
+                  -X DELETE \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   -H "accept: application/vnd.github.v3+json" \
                   $FILE_URL
