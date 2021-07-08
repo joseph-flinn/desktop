@@ -105,7 +105,7 @@ jobs:
           curl \
               -H "Authorization:token ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept:application/vnd.github.v3+json" \
-              https://api.github.com/repos/joseph-flinn/desktop/releases \
+              https://api.github.com/repos/$GITHUB_REPOSITORY/releases \
               | jq -r " .[] | select( .tag_name == \"$TAG_VERSION\")" > release.json
 
           echo "=====RELEASE====="
