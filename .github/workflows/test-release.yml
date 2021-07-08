@@ -144,7 +144,7 @@ jobs:
               -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "accept:application/vnd.github.v3+json" \
               https://api.github.com/repos/joseph-flinn/desktop/releases \
-              | jq -r ' .[] | select( .tag_name == "$TAG_VERSION")' 
+              | jq -r " .[] | select( .tag_name == $TAG_VERSION)" 
           )
 
           echo -e "Release data:\n$RELEASE_DATA"
