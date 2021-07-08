@@ -127,6 +127,7 @@ jobs:
         env:
           RELEASE_UPLOAD_URL: ${{ steps.asset_data.outputs.release_upload_url }}
           RELEASE_ASSETS: ${{ steps.asset_data.outputs.release_assets }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo $RELEASE_ASSETS | while read asset
           do 
