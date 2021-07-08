@@ -94,16 +94,16 @@ jobs:
     env:
       PKG_VERSION: ${{ needs.setup.outputs.package_version }}
       TAG_VERSION: ${{ needs.setup.outputs.tag_version }}
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
       - name: Get Electron publish assets
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RELEASE_DATA=$(curl \
-              -H "authorization: Bearer $GITHUB_TOKEN" \
+              -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "accept:application/vnd.github.v3+json" \
               https://api.github.com/repos/joseph-flinn/desktop/releases \
               | jq -r ' .[] | select( .tag_name == "$TAG_VERSION")' 
@@ -130,7 +130,7 @@ jobs:
 
               echo "Grabbing asset..."
               curl \
-                  -H "authorization: Bearer $GITHUB_TOKEN" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   -H "Accept: application/octet-stream" \
                   $FILE_URL --output  $FILE_NAME
 
@@ -142,7 +142,7 @@ jobs:
               echo "Deleting remote asset..."
               curl \
                   -v -X DELETE \
-                  -H "authorization: Bearer $GITHUB_TOKEN" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   -H "accept: application/vnd.github.v3+json" \
                   $FILE_URL
 
